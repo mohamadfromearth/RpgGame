@@ -1,19 +1,42 @@
-using System.Collections;
-using System.Collections.Generic;
+using Rpg.Combat;
 using UnityEngine;
+using Rpg.Movement;
 
 public class PlayerController : MonoBehaviour
 {
     private Mover mover;
+    private Fighter fighter;
 
-    // Start is called before the first frame update
+    
     void Start()
     {
         mover = GetComponent<Mover>();
+        fighter = GetComponent<Fighter>();
     }
 
-    // Update is called once per frame
     void Update()
+    {
+        IntractWithCombat();
+        IntractWithMovement();
+    }
+
+    private void IntractWithCombat()
+    {
+        RaycastHit[] hits = Physics.RaycastAll(GetMouseRay());
+        foreach (var hit in hits )
+        {
+            var target = hit.collider.transform.GetComponent<CombatTarget>();
+            if (target == null) continue;
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                fighter.Attack(target);
+            }
+            
+        }
+    }
+
+    private void IntractWithMovement()
     {
         if (Input.GetMouseButton(0))
         {
@@ -24,12 +47,17 @@ public class PlayerController : MonoBehaviour
 
     void MoveToCursor()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = GetMouseRay();
         RaycastHit hit;
         bool hasHit = Physics.Raycast(ray, out hit);
         if (hasHit)
         {
             mover.MoveTo(hit.point);
         }
+    }
+
+    private static Ray GetMouseRay()
+    {
+        return Camera.main.ScreenPointToRay(Input.mousePosition);
     }
 }

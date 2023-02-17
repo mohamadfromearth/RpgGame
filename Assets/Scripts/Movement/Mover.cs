@@ -1,46 +1,48 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Mover : MonoBehaviour
+
+namespace Rpg.Movement
 {
-    Transform target;
-
-    NavMeshAgent navmeshAgent;
-
-    Animator animator;
-
-    // Update is called once per frame
-
-
-    void Start()
+    public class Mover : MonoBehaviour
     {
-        navmeshAgent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();
-    }
+        Transform target;
+
+        NavMeshAgent navmeshAgent;
+
+        Animator animator;
+
+        // Update is called once per frame
 
 
-    void Update()
-    {
+        void Start()
+        {
+            navmeshAgent = GetComponent<NavMeshAgent>();
+            animator = GetComponent<Animator>();
+        }
+
+
+        void Update()
+        {
       
-        UpdateAnimator();
-    }
+            UpdateAnimator();
+        }
 
 
 
 
-    public void MoveTo(Vector3 destination)
-    {
-        navmeshAgent.destination = destination;
-    }
+        public void MoveTo(Vector3 destination)
+        {
+            navmeshAgent.destination = destination;
+        }
 
-    void UpdateAnimator()
-    {
-        Vector3 velocity = navmeshAgent.velocity;
-        Vector3 localVelocity = transform.InverseTransformDirection(velocity);
-        float speed = localVelocity.z;
-        animator.SetFloat("forwardSpeed",speed);
+        void UpdateAnimator()
+        {
+            Vector3 velocity = navmeshAgent.velocity;
+            Vector3 localVelocity = transform.InverseTransformDirection(velocity);
+            float speed = localVelocity.z;
+            animator.SetFloat("forwardSpeed",speed);
+        }
     }
 }
+
