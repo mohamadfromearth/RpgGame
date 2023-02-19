@@ -1,4 +1,3 @@
-using System;
 using Rpg.Core;
 using Rpg.Movement;
 using UnityEngine;
@@ -12,6 +11,10 @@ namespace Rpg.Combat
         private ActionScheduler actionScheduler;
         private Animator animator;
         [SerializeField] private float weaponRange = 2f;
+        [SerializeField] private float timeBetweenAttack = 1f;
+        [SerializeField] private float weaponDamage = 5f;
+
+        private float timeSinceLastAttack;
 
         private void Start()
         {
@@ -23,6 +26,7 @@ namespace Rpg.Combat
 
         private void Update()
         {
+            timeSinceLastAttack += Time.deltaTime;
             if (target == null) return;
 
             if (!GetInRange())
@@ -39,10 +43,16 @@ namespace Rpg.Combat
 
         private void AttackBehavior()
         {
-            animator.SetTrigger("Attack");
+            if (timeSinceLastAttack > timeBetweenAttack)
+            {
+                timeSinceLastAttack = 0;
+                animator.SetTrigger("Attack"); 
+            }
+            
+            
         }
 
-        private bool GetInRange()
+        private bool GetInRange() 
         {
             return Vector3.Distance(transform.position, target.position) < weaponRange;
         }
@@ -56,6 +66,8 @@ namespace Rpg.Combat
         // Animation Event
         void Hit()
         {
+            Health healthComponent = target.GetComponent<Health>();
+            healthComponent.TakeDamage(weaponDamage);
         }
 
         public void Cancel()
