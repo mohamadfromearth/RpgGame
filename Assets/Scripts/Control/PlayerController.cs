@@ -2,66 +2,68 @@ using Rpg.Combat;
 using UnityEngine;
 using Rpg.Movement;
 
-public class PlayerController : MonoBehaviour
+namespace RPG.Control
 {
-    private Mover mover;
-    private Fighter fighter;
-
-
-    void Start()
+    public class PlayerController : MonoBehaviour
     {
-        mover = GetComponent<Mover>();
-        fighter = GetComponent<Fighter>();
-    }
-
-    void Update()
-    {
-        if (IntractWithCombat()) return;
-        if (IntractWithMovement()) return;
-        print("Nothing to do");
-            
-    }
-
-    private bool IntractWithCombat()
-    {
-        RaycastHit[] hits = Physics.RaycastAll(GetMouseRay());
-        foreach (var hit in hits)
+        private Mover mover;
+        private Fighter fighter;
+    
+    
+        void Start()
         {
-            var target = hit.collider.transform.GetComponent<CombatTarget>();
-            if (target == null) continue;
-
-            if (Input.GetMouseButtonDown(0))
-            {
-                fighter.Attack(target);
-            }
-
-            return true;
+            mover = GetComponent<Mover>();
+            fighter = GetComponent<Fighter>();
         }
-
-        return false;
-    }
-
-    private bool IntractWithMovement()
-    {
-        Ray ray = GetMouseRay();
-        RaycastHit hit;
-        bool hasHit = Physics.Raycast(ray, out hit);
-        if (hasHit)
+    
+        void Update()
         {
-            if (Input.GetMouseButton(0))
-            {
-                mover.StartMoveAction(hit.point);
-            }
-
-            return true;
+            if (IntractWithCombat()) return;
+            if (IntractWithMovement()) return;
+            print("Nothing to do");
         }
-
-        return false;
-    }
-
-
-    private static Ray GetMouseRay()
-    {
-        return Camera.main.ScreenPointToRay(Input.mousePosition);
+    
+        private bool IntractWithCombat()
+        {
+            RaycastHit[] hits = Physics.RaycastAll(GetMouseRay());
+            foreach (var hit in hits)
+            {
+                var target = hit.collider.transform.GetComponent<CombatTarget>();
+                if (!fighter.CanAttack(target)) continue;
+    
+                if (Input.GetMouseButtonDown(0))
+                {
+                    fighter.Attack(target);
+                }
+    
+                return true;
+            }
+    
+            return false;
+        }
+    
+        private bool IntractWithMovement()
+        {
+            Ray ray = GetMouseRay();
+            RaycastHit hit;
+            bool hasHit = Physics.Raycast(ray, out hit);
+            if (hasHit)
+            {
+                if (Input.GetMouseButton(0))
+                {
+                    mover.StartMoveAction(hit.point);
+                }
+    
+                return true;
+            }
+    
+            return false;
+        }
+    
+    
+        private static Ray GetMouseRay()
+        {
+            return Camera.main.ScreenPointToRay(Input.mousePosition);
+        }
     }
 }

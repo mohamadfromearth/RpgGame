@@ -54,6 +54,7 @@ namespace Rpg.Movement
         public void Cancel()
         {
             navmeshAgent.isStopped = true;
+            
         }
     }
 }

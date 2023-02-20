@@ -49,13 +49,25 @@ namespace Rpg.Combat
             if (timeSinceLastAttack > timeBetweenAttack)
             {
                 timeSinceLastAttack = 0;
-                animator.SetTrigger("Attack");
+                animator.SetTrigger("Attack");    
+                
+                
             }
         }
 
         private bool GetInRange()
         {
             return Vector3.Distance(transform.position, target.transform.position) < weaponRange;
+        }
+
+        public bool CanAttack(CombatTarget combatTarget)
+        {
+            if (combatTarget == null)
+            {
+                return false;  
+            }
+            Health targetToTest = combatTarget.GetComponent<Health>();
+            return targetToTest != null && ! targetToTest.IsDead;
         }
 
         public void Attack(CombatTarget combatTarget)
@@ -67,15 +79,19 @@ namespace Rpg.Combat
         // Animation Event
         void Hit()
         {
-            
-
+            if (target == null)
+            {
+                return;
+            }
             target.TakeDamage(weaponDamage);
         }
 
         public void Cancel()
         {
-            animator.SetTrigger("stopAttack");
             target = null;
+            Debug.Log("StopAttack");
+            animator.SetTrigger("stopAttack");
+            
         }
     }
 }
