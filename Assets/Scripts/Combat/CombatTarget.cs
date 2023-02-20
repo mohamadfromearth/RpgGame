@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Rpg.Core;
 
 namespace Rpg.Combat
 {

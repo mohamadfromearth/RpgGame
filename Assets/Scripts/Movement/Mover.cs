@@ -15,17 +15,21 @@ namespace Rpg.Movement
 
         private ActionScheduler actionScheduler;
 
+        private Health health;
+
 
         void Start()
         {
             navmeshAgent = GetComponent<NavMeshAgent>();
             animator = GetComponent<Animator>();
             actionScheduler = GetComponent<ActionScheduler>();
+            health = GetComponent<Health>();
         }
 
 
         void Update()
         {
+            navmeshAgent.enabled = !health.IsDead;
             UpdateAnimator();
         }
 
@@ -41,7 +45,7 @@ namespace Rpg.Movement
             navmeshAgent.destination = destination;
             navmeshAgent.isStopped = false;
         }
-        
+
 
         void UpdateAnimator()
         {
@@ -54,7 +58,6 @@ namespace Rpg.Movement
         public void Cancel()
         {
             navmeshAgent.isStopped = true;
-            
         }
     }
 }
