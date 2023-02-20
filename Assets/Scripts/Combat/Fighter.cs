@@ -6,7 +6,7 @@ namespace Rpg.Combat
 {
     public class Fighter : MonoBehaviour, IAction
     {
-        private Transform target;
+        private Health target;
         private Mover mover;
         private ActionScheduler actionScheduler;
         private Animator animator;
@@ -28,11 +28,13 @@ namespace Rpg.Combat
         {
             timeSinceLastAttack += Time.deltaTime;
             if (target == null) return;
+            if (target.IsDead) return;
+            
 
-            if (!GetInRange())
+                if (!GetInRange())
             {
                 actionScheduler.StartAction(this);
-                mover.MoveTo(target.position);
+                mover.MoveTo(target.transform.position);
             }
             else
             {
@@ -43,35 +45,36 @@ namespace Rpg.Combat
 
         private void AttackBehavior()
         {
+            transform.LookAt(target.transform.position);
             if (timeSinceLastAttack > timeBetweenAttack)
             {
                 timeSinceLastAttack = 0;
-                animator.SetTrigger("Attack"); 
+                animator.SetTrigger("Attack");
             }
-            
-            
         }
 
-        private bool GetInRange() 
+        private bool GetInRange()
         {
-            return Vector3.Distance(transform.position, target.position) < weaponRange;
+            return Vector3.Distance(transform.position, target.transform.position) < weaponRange;
         }
 
         public void Attack(CombatTarget combatTarget)
         {
             actionScheduler.StartAction(this);
-            target = combatTarget.transform;
+            target = combatTarget.GetComponent<Health>();
         }
 
         // Animation Event
         void Hit()
         {
-            Health healthComponent = target.GetComponent<Health>();
-            healthComponent.TakeDamage(weaponDamage);
+            
+
+            target.TakeDamage(weaponDamage);
         }
 
         public void Cancel()
         {
+            animator.SetTrigger("stopAttack");
             target = null;
         }
     }
