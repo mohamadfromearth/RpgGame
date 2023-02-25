@@ -1,3 +1,4 @@
+using System;
 using Rpg.Combat;
 using Rpg.Core;
 using Rpg.Movement;
@@ -9,7 +10,9 @@ namespace RPG.Control
     {
         [SerializeField] private float suspicionsTime = 5f;
         [SerializeField] private float chaseDistance = 5f;
-        private float timeSinceLastSawPlayer;
+        [SerializeField] private float wayPointDwellTime = 5f;
+        private float timeSinceLastSawPlayer = Mathf.Infinity;
+        private float timeSinceArrivedWayPoint = Mathf.Infinity;
         private GameObject player;
         private Vector3 guardPosition;
         private Fighter fighter;
@@ -49,6 +52,7 @@ namespace RPG.Control
             }
 
             timeSinceLastSawPlayer += Time.deltaTime;
+            timeSinceArrivedWayPoint += Time.deltaTime;
         }
 
         private void AttackBehaviour()
@@ -70,14 +74,22 @@ namespace RPG.Control
                 if (AtWayPoint())
                 {
                     Debug.Log("cycle");
-                    CycleWayPoint();
+                    timeSinceArrivedWayPoint = 0;
+                    
+                        CycleWayPoint();
+                        
+                    
                 }
 
                 Debug.Log("next pos");
                 nextPosition = GetCurrentWayPoint();
             }
 
-            mover.StartMoveAction(nextPosition);
+            if (timeSinceArrivedWayPoint > wayPointDwellTime)
+            {
+                mover.StartMoveAction(nextPosition); 
+            }      
+            
         }
 
         private Vector3 GetCurrentWayPoint()
@@ -92,7 +104,7 @@ namespace RPG.Control
 
         private bool AtWayPoint()
         {
-            float distanceToWayPoint = Vector3.Distance(transform.position,GetCurrentWayPoint());
+            float distanceToWayPoint = Vector3.Distance(transform.position, GetCurrentWayPoint());
             Debug.Log("distance" + distanceToWayPoint);
             return distanceToWayPoint < wayPointTolerance;
         }
