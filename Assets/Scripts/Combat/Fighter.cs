@@ -34,7 +34,7 @@ namespace Rpg.Combat
                 if (!GetInRange())
             {
                 actionScheduler.StartAction(this);
-                mover.MoveTo(target.transform.position);
+                mover.MoveTo(target.transform.position,1f);
             }
             else
             {

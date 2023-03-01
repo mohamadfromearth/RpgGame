@@ -17,6 +17,8 @@ namespace Rpg.Movement
 
         private Health health;
 
+        [SerializeField] private float maxSpeed = 5f;
+
 
         void Start()
         {
@@ -34,15 +36,16 @@ namespace Rpg.Movement
         }
 
 
-        public void StartMoveAction(Vector3 destination)
+        public void StartMoveAction(Vector3 destination,float speedFraction)
         {
             actionScheduler.StartAction(this);
-            MoveTo(destination);
+            MoveTo(destination,speedFraction);
         }
 
-        public void MoveTo(Vector3 destination)
+        public void MoveTo(Vector3 destination,float speedFraction)
         {
             navmeshAgent.destination = destination;
+            navmeshAgent.speed = maxSpeed * speedFraction;
             navmeshAgent.isStopped = false;
         }
 
